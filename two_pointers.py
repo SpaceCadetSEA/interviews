@@ -1,5 +1,6 @@
 from typing import List, Tuple
 from math import inf
+from data_structures.LinkedList import LinkedList, display
 
 
 def is_palindrome(word: str) -> bool:
@@ -109,6 +110,7 @@ def container_with_most_water(heights: List[int]) -> int:
 
 
 def product_except_self(arr: List[int]) -> List[int]:
+    """Best case: time: O(n) space: O(1)"""
     n = len(arr)
     res = [1] * n
     left_product, right_product = 1, 1
@@ -133,14 +135,18 @@ class ListNode:
         self.next = next
 
 
-def remove_nth_last_node(head: ListNode, n: int):
+def remove_nth_last_node(head: List[int], n: int):
+    """
+    0-> 1-> 2-> 3-> null
+
+    [69,8,49,106,116,112] , 6
+    """
     left = head
     right = head
-    while n > 0:
+    for _ in range(n):
         right = right.next
         if right is None:
-            return head
-        n -= 1
+            return head.next
     while right.next is not None:
         right = right.next
         left = left.next
@@ -148,19 +154,92 @@ def remove_nth_last_node(head: ListNode, n: int):
     return head
 
 
+def middle_of_linked_list(head: ListNode) -> ListNode:
+    fast = head
+    slow = head
+
+    while fast is not None and fast.next is not None:
+        fast = fast.next.next
+        slow = slow.next
+
+    return slow
+
+
+def detect_cycle_in_array(arr: List[int]) -> bool:
+    if arr[0] < len(arr) - 1:
+        return False
+    
+    slow = arr[0]
+    fast = arr[arr[0]]
+
+    while fast < len(arr) - 1:
+        if fast == slow:
+            return True
+        slow = arr[slow]
+        fast = arr[arr[fast]]
+
+    return False
+
+
+def detect_cycle_in_linked_list(head: ListNode) -> bool:
+    if head is None:
+        return False
+    slow = head
+    fast = head
+    while fast is not None and fast.next is not None:
+        # detect loop
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast:
+            return True
+    # while loop has terminated, no loop found
+    return False
+
+
+def is_happy_number(n: int) -> bool:
+    def sum_of_squares(n: int) -> int:
+        running_total = 0
+        while n != 0:
+            # break off digit
+            digit = n % 10
+            # alter n
+            n //= 10
+            running_total += digit**2
+            # continue
+        return running_total
+    slow = n
+    fast = sum_of_squares(n)
+    while fast != 1:
+        slow = sum_of_squares(slow)
+        fast = sum_of_squares(sum_of_squares(fast))
+        if fast == slow:
+            return False
+    return True
+
+
+def binary_search_rotated(nums: List[int], target: int) -> int:
+    low, high = 0, len(nums) - 1
+    while low <= high:
+        mid = low + (high - low) // 2
+        if nums[mid] == target:
+            return mid
+        # low to mid sorted
+        if nums[low] <= nums[mid]:
+            if nums[low] <= target and target < nums[mid]:
+                high = mid - 1
+            else:
+                low = mid + 1
+        # mid to high sorted
+        else:
+            if nums[mid] < target and target <= nums[high]:
+                low = mid + 1
+            else:
+                high = mid - 1
+    return -1
+
+
 if __name__ == "__main__":
-    # print(is_palindrome("madam"))
-    # print(is_palindrome("racecar"))
-    # print(is_palindrome("happy"))
-    # print(is_palindrome("abccba"))
-
-    # print(swap_string(["b", "a", "c", "k", "w", "a", "r", "d"]))
-    # print(swap_string(["a", "b", "c"]))
-
-    # print(find_sorted_array_sum([2, 3, 5, 7, 11, 13], 14))
-
-    # print(move_zeroes([0, 0, 0, 1, 2, 3, 4, 0, 0]))
-
-    # print(three_sum([0, 0, 0]))
-
-    print(container_with_most_water([1, 8, 6, 2, 5, 4, 8, 3, 7]))
+    # linked_list = LinkedList([69,8,49, 105,106,116,112])
+    # display(middle_of_linked_list(linked_list.head))
+    # print(detect_cycle_in_array([2, 3, 1, 4, 5, 9, 7]))
+    print(is_happy_number(4))
