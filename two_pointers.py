@@ -134,17 +134,18 @@ class ListNode:
 
 
 def remove_nth_last_node(head: ListNode, n: int):
-    left, right = head
-    for _ in range(n):
+    left = head
+    right = head
+    while n > 0:
         right = right.next
         if right is None:
             return head
-    while right is not None:
+        n -= 1
+    while right.next is not None:
         right = right.next
         left = left.next
     left.next = left.next.next
     return head
-
 
 
 if __name__ == "__main__":
