@@ -168,7 +168,7 @@ def middle_of_linked_list(head: ListNode) -> ListNode:
 def detect_cycle_in_array(arr: List[int]) -> bool:
     if arr[0] < len(arr) - 1:
         return False
-    
+
     slow = arr[0]
     fast = arr[arr[0]]
 
@@ -205,8 +205,8 @@ def is_happy_number(n: int) -> bool:
             # alter n
             n //= 10
             running_total += digit**2
-            # continue
         return running_total
+
     slow = n
     fast = sum_of_squares(n)
     while fast != 1:
@@ -238,8 +238,48 @@ def binary_search_rotated(nums: List[int], target: int) -> int:
     return -1
 
 
+def find_min_in_rotated_array(arr: List[int]) -> int:
+    if len(arr) == 1:
+        return arr[0]
+
+    left = 0
+    right = len(arr) - 1
+
+    if arr[right] > arr[0]:
+        return arr[0]
+
+    while right >= left:
+        mid = left + (right - left) // 2
+        if arr[mid] > arr[mid + 1]:
+            return arr[mid + 1]
+
+        if arr[mid] < arr[mid - 1]:
+            return arr[mid]
+
+        if arr[mid] > arr[left]:
+            left = mid + 1
+        else:
+            right = mid - 1
+
+    return -1
+
+
 if __name__ == "__main__":
     # linked_list = LinkedList([69,8,49, 105,106,116,112])
     # display(middle_of_linked_list(linked_list.head))
     # print(detect_cycle_in_array([2, 3, 1, 4, 5, 9, 7]))
-    print(is_happy_number(4))
+    # print(is_happy_number(4))
+    print(
+        find_min_in_rotated_array(
+            [
+                6,
+                7,
+                8,
+                9,
+                1,
+                2,
+                3,
+                4,
+            ]
+        )
+    )
