@@ -1,17 +1,21 @@
+from typing import List
+
 from data_structures.LinkedList import LinkedList, display, ListNode
 
 
 def fold_linked_list(head: ListNode) -> ListNode:
     if not head:
         return head
-    slow = fast = head
+    slow = head
+    fast = head
 
     while fast and fast.next:
         slow = slow.next
         fast = fast.next.next
-    prev, curr = None, slow
 
-    while curr:
+    prev = None
+    curr = slow
+    while curr:  # while we have nodes to process, e.g. curr != None
         next = curr.next
         curr.next = prev
         prev = curr
@@ -35,6 +39,22 @@ def fold_linked_list(head: ListNode) -> ListNode:
     return head
 
 
+def reverse_linked_list(head: ListNode) -> ListNode:
+    if not head:
+        return head
+
+    prev = None
+    curr = head
+
+    while curr:
+        next = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next
+
+    return prev
+
+
 def reverse_k_groups(head, k):
     dummy = ListNode(0)
     dummy.next = head
@@ -44,7 +64,7 @@ def reverse_k_groups(head, k):
         # Keep track of the current position
         tracker = ptr
         # Traverse k nodes to check if there are enough nodes to reverse
-        for i in range(k):
+        for _ in range(k):
             # If there are not enough nodes to reverse, break out of the loop
             if tracker == None:
                 break
@@ -56,16 +76,11 @@ def reverse_k_groups(head, k):
         # Reverse the current group of k nodes
         previous = None
         current = ptr.next
-        next = None
         for _ in range(k):
             # temporarily store the next node
             next = current.next
-            # reverse the current node
             current.next = previous
-            # before we move to the next node, point previous to the
-            # current node
             previous = current
-            # move to the next node
             current = next
 
         # Connect the reversed group to the rest of the linked list
@@ -81,7 +96,7 @@ def valid_parens(string: str) -> bool:
     stack = []
     parens = {"}": "{", ")": "(", "]": "["}
 
-    for s in string:
+    for s in string:  # O(N)
         if s not in parens.keys():
             stack.append(s)
         else:
@@ -107,7 +122,7 @@ def remove_duplicates(string: str) -> str:
                 stack.pop()
             else:
                 stack.append(s)
-    return ''.join(stack)
+    return "".join(stack)
 
 
 def calculator(expression: str) -> int:
@@ -121,15 +136,15 @@ def calculator(expression: str) -> int:
             number = number * 10 + int(c)
         if c in "+-":
             result += number * sign_value
-            sign_value = -1 if c == '-' else 1
+            sign_value = -1 if c == "-" else 1
             number = 0
-        elif c == '(':
+        elif c == "(":
             operations_stack.append(result)
             operations_stack.append(sign_value)
             result = 0
             sign_value = 1
 
-        elif c == ')':
+        elif c == ")":
             result += sign_value * number
             pop_sign_value = operations_stack.pop()
             result *= pop_sign_value
@@ -137,18 +152,138 @@ def calculator(expression: str) -> int:
             second_value = operations_stack.pop()
             result += second_value
             number = 0
-    
+
     return result + number * sign_value
+
+
+def set_matrix_zeroes(mat: List[List[int]]) -> List[List[int]]:
+    frow = fcol = False
+    m = len(mat)
+    n = len(mat[0])
+
+    for i in range(m):
+        for j in range(n):  # O(M x N)
+            if mat[i][0] == 0:
+                frow = True
+            if mat[0][j] == 0:
+                fcol = True
+
+    for i in range(1, m):
+        for j in range(1, n):
+            if mat[i][j] == 0:
+                mat[0][j] = 0
+                mat[i][0] = 0
+
+    for i in range(1, m):
+        if mat[i][0] == 0:
+            for j in range(1, n):
+                mat[i][j] = 0
+
+    for j in range(1, n):
+        if mat[0][j] == 0:
+            for i in range(1, m):
+                mat[i][j] = 0
+
+    if frow:
+        for i in range(m):
+            mat[i][0] = 0
+    if fcol:
+        for j in range(n):
+            mat[0][j] = 0
+
+    return mat
+
+
+def rotate_image(matrix: List[List[int]]) -> List[List[int]]:
+    n = len(matrix)
+    if n < 2:
+        return matrix
+
+    for row in range(n - 1 // 2):  # O(N^2)
+        for col in range(row, n - 1 - row):
+            top_left = (row, col)
+            top_right = (col, n - 1 - row)
+            bottom_right = (n - 1 - row, n - 1 - col)
+            bottom_left = (n - 1 - col, row)
+
+            # swap top left and top right
+            (matrix[top_left[0]][top_left[1]], matrix[top_right[0]][top_right[1]]) = (
+                matrix[top_right[0]][top_right[1]],
+                matrix[top_left[0]][top_left[1]],
+            )
+            # swap top left and bottom right
+            (
+                matrix[top_left[0]][top_left[1]],
+                matrix[bottom_right[0]][bottom_right[1]],
+            ) = (
+                matrix[bottom_right[0]][bottom_right[1]],
+                matrix[top_left[0]][top_left[1]],
+            )
+            # swap top left and bottom left
+            (
+                matrix[top_left[0]][top_left[1]],
+                matrix[bottom_left[0]][bottom_left[1]],
+            ) = (
+                matrix[bottom_left[0]][bottom_left[1]],
+                matrix[top_left[0]][top_left[1]],
+            )
+    return matrix
+
+
+def spiral_order(matrix: List[List[int]]) -> List[int]:
+    rows, cols = len(matrix), len(matrix[0])
+    row, col = 0, -1
+    direction = 1
+    result = []
+
+    while rows > 0 and cols > 0:  # O(M * N)
+        for _ in range(cols):
+            col += direction
+            result.append(matrix[row][col])
+        rows -= 1
+
+        for _ in range(rows):
+            row += direction
+            result.append(matrix[row][col])
+        cols -= 1
+
+        direction *= -1
+
+    return result
+
+
+def find_exit_column(grid: List[List[int]]) -> List[int]:
+    rows, cols = len(grid), len(grid[0])
+    result = [0 for _ in range(cols)]
+
+    row = 0
+
+    while row > rows:
+        for col in range(cols):
+            curr_col = result[col] + col
+
+            diagonal = grid[row][curr_col]
+            if (diagonal == -1 and curr_col == 0) or (diagonal == 1 and curr_col == cols - 1):
+                result[col] = -1
+                break
             
-        
+            if diagonal == -1:
+                next_diagonal = grid[row][curr_col - 1]
+            else:
+                grid[row][curr_col + 1]
 
-
-
-
-
+            if (diagonal == -1 and next_diagonal == 1) or (
+                diagonal == 1 and next_diagonal == -1
+            ):
+                result[col] = -1
+            else:
+                result[col] += diagonal
+        row += 1
+    return result
 
 
 if __name__ == "__main__":
     linked_list = LinkedList([1, 2, 3, 4, 5])
     # display(reverse_k_groups(linked_list.head, 2))
-    print(calculator("12 - (6 + 2) + 5"))
+    # print(calculator("12 - (6 + 2) + 5"))
+    print(spiral_order([[6], [2]]))
