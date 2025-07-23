@@ -256,34 +256,69 @@ def find_exit_column(grid: List[List[int]]) -> List[int]:
     rows, cols = len(grid), len(grid[0])
     result = [0 for _ in range(cols)]
 
-    row = 0
+    col = 0
 
-    while row > rows:
-        for col in range(cols):
-            curr_col = result[col] + col
-
-            diagonal = grid[row][curr_col]
-            if (diagonal == -1 and curr_col == 0) or (diagonal == 1 and curr_col == cols - 1):
-                result[col] = -1
-                break
-            
-            if diagonal == -1:
-                next_diagonal = grid[row][curr_col - 1]
+    while col < cols:
+        curr_col = col
+        for row in range(rows):
+            if grid[row][curr_col] == -1:
+                if curr_col == 0:
+                    result[col] = -1
+                    break
+                else:
+                    prev_col = curr_col - 1
+                    if grid[row][prev_col] == 1:
+                        result[col] = -1
+                        break
+                    else:
+                        curr_col -= 1
             else:
-                grid[row][curr_col + 1]
+                if curr_col == cols - 1:
+                    result[col] = -1
+                    break
+                else:
+                    next_col = curr_col + 1
+                    if grid[row][next_col] == -1:
+                        result[col] = -1
+                        break
+                    else:
+                        curr_col += 1
+        if result[col] != -1:
+            result[col] = curr_col
+        col += 1
 
-            if (diagonal == -1 and next_diagonal == 1) or (
-                diagonal == 1 and next_diagonal == -1
-            ):
-                result[col] = -1
-            else:
-                result[col] += diagonal
-        row += 1
     return result
+
+
+# def find_exit_column(grid):
+#     result = [-1] * len(grid[0])
+#     for col in range(len(grid[0])):
+#         current_col = col
+#         for row in range(len(grid)):
+#             next_col = current_col + grid[row][current_col]
+#             if (
+#                 next_col < 0
+#                 or next_col > len(grid[0]) - 1
+#                 or grid[row][current_col] != grid[row][next_col]
+#             ):
+#                 break
+#             if row == len(grid) - 1:
+#                 result[col] = next_col
+#             current_col = next_col
+#     return result
 
 
 if __name__ == "__main__":
     linked_list = LinkedList([1, 2, 3, 4, 5])
     # display(reverse_k_groups(linked_list.head, 2))
     # print(calculator("12 - (6 + 2) + 5"))
-    print(spiral_order([[6], [2]]))
+    print(
+        find_exit_column(
+            [
+                [1, 1, 1, -1, 1, 1],
+                [-1, -1, 1, -1, -1, 1],
+                [1, 1, 1, -1, 1, 1],
+                [-1, -1, -1, 1, 1, -1],
+            ]
+        )
+    )
