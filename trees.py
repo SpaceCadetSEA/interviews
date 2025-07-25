@@ -92,6 +92,32 @@ def vertical_order(root):
     return result
 
 
+def is_symmetric(root: TreeNode) -> bool:
+    if not root:
+        return True
+
+    q = deque()
+    q.append(root.left)
+    q.append(root.right)
+
+    while q:
+        left = q.popleft()
+        right = q.popleft()
+
+        if not left and not right:
+            continue
+
+        if (left and not right) or (right and not left) or left.data != right.data:
+            return False
+
+        q.append(left.left)
+        q.append(right.right)
+        q.append(left.right)
+        q.append(right.left)
+
+    return True
+
+
 def _serialize(root: TreeNode, res=[]):
     if not root:
         res.append(None)
@@ -133,7 +159,7 @@ def _max_contrib(root: TreeNode) -> int:
         return 0
     left_subtree_max = _max_contrib(root.left)
     right_subtree_max = _max_contrib(root.right)
-    
+
     left_subtree = 0
     right_subtree = 0
 
@@ -141,7 +167,7 @@ def _max_contrib(root: TreeNode) -> int:
         left_subtree = left_subtree_max
     if right_subtree_max > 0:
         right_subtree = right_subtree_max
-    
+
     path_max = root.data + left_subtree + right_subtree
     max_sum = max(max_sum, path_max)
     return root.data + max(left_subtree, right_subtree)
@@ -158,14 +184,14 @@ def _build_tree_rec(p_order, i_order):
     global p_idx
     if not i_order:
         return None
-    
+
     root_val = p_order[p_idx]
     p_idx += 1
     root = TreeNode(root_val)
     i_idx = i_order.index(root.data)
 
     root.left = _build_tree_rec(p_order, i_order[:i_idx])
-    root.right = _build_tree_rec(p_order, i_order[i_idx + 1:])
+    root.right = _build_tree_rec(p_order, i_order[i_idx + 1 :])
     return root
 
 
@@ -175,12 +201,154 @@ def build_tree(p_order, i_order):
     return _build_tree_rec(p_order, i_order)
 
 
+def _mirror_binary_tree_rec(root: TreeNode) -> TreeNode:
+    if not root:
+        return None
+
+    left_subtree = _mirror_binary_tree_rec(root.left)
+    right_subtree = _mirror_binary_tree_rec(root.right)
+
+    root.left = right_subtree
+    root.right = left_subtree
+
+    return root
+
+
+def mirror_binary_tree(root: TreeNode) -> TreeNode:
+    if not root:
+        return root
+    return _mirror_binary_tree_rec(root)
+
+
+def _kth_smallest_element_rec(root, k):
+    if not root:
+        return None
+
+    left = _kth_smallest_element_rec(root.left, k)
+
+    if left:
+        return left
+
+    k[0] -= 1
+    if k[0] == 0:
+        return root
+
+    return _kth_smallest_element_rec(root.right, k)
+
+
+def kth_smallest_element(root, k):
+    # had to use a mutable datatype, not an int for K across recursive calls
+    return _kth_smallest_element_rec(root, [k]).data
+
+
+def _lowest_common_ancestor_rec(current_node, p, q):
+    if not current_node:
+        return None
+
+    mid = None
+    left = None
+    right = None
+
+    mid = current_node.data in [p.data, q.data]
+    left = _lowest_common_ancestor_rec(current_node.left, p, q)
+    right = _lowest_common_ancestor_rec(current_node.right, p, q)
+
+    if (mid and left) or (mid and right) or (left and right):
+        return current_node
+
+    if mid:
+        return current_node
+    if left:
+        return left
+    if right:
+        return right
+    return None
+
+
+def lowest_common_ancestor(current_node, p, q):
+    return _lowest_common_ancestor_rec(current_node, p, q)
+
+
+def _find_max_depth_rec(root):
+    if not root:
+        return 0
+    # AI complained that it wasn't DFS to call the recursive helper f(x)
+    # within the max() comparator.
+    left_max = _find_max_depth_rec(root.left)
+    right_max = _find_max_depth_rec(root.right)
+
+    return 1 + max(left_max, right_max)
+
+
+def find_max_depth(root) -> int:
+    """CSE 143 problem: height()"""
+    return _find_max_depth_rec(root)
+
+
+def find_max_depth_EXAMPLE(root):
+    if not root:
+        return 0
+
+    nodes_stack = deque([(root, 1)])
+
+    max_depth = 0
+    while nodes_stack:
+        node, depth = nodes_stack.pop()
+        if node.left:
+            nodes_stack.append((node.left, depth + 1))
+        if node.right:
+            nodes_stack.append((node.right, depth + 1))
+        if not node.left and not node.right:
+            max_depth = max(max_depth, depth)
+    return max_depth
+
+
+def _same_tree_rec(p, q):
+    if not p or not q:
+        return p is None and q is None
+    left_nodes_same = _same_tree_rec(p.left, q.left)
+    right_nodes_same = _same_tree_rec(p.right, q.right)
+
+    return p.data == q.data and left_nodes_same and right_nodes_same
+
+
+def same_tree(p, q):
+    return _same_tree_rec(p, q)
+
+
+def same_tree(p, q):
+    left_queue = deque()
+    right_queue = deque()
+
+    left_queue.append(p)
+    right_queue.append(q)
+
+    while left_queue or right_queue:
+        if (len(left_queue) > 0 and len(right_queue) == 0) or (
+            len(right_queue) > 0 and len(left_queue) == 0
+        ):
+            return False
+
+        left_tree = left_queue.popleft()
+        right_tree = right_queue.popleft()
+
+        if left_tree.data != right_tree.data:
+            return False
+
+        left_queue.append(left_tree.left)
+        left_queue.append(left_tree.right)
+        right_queue.append(right_tree.left)
+        right_queue.append(right_tree.right)
+    return True
+
+
 if __name__ == "__main__":
-    values = [-8, 2, 17, 1, 4, 19, 5]
+    values = [23, 21, 24, None, 22, None, None]
     tree_nodes = [TreeNode(val) for val in values]
     tree = BinaryTree(tree_nodes)
     # print(level_order_traversal(tree.root))
 
     # print(serialize(tree.root))
     # print(max_path_sum(tree.root))
-    print(build_tree([3,9,20,15,7], [9,3,15,20,7]))
+    # print(build_tree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7]))
+    print(kth_smallest_element(tree.root, 3))
