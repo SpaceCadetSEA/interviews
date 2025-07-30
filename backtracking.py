@@ -134,4 +134,4 @@ if __name__ == "__main__":
     values = [3, 2, 3, None, 3, None, 1]
     tree_nodes = [TreeNode(val) for val in values]
     tree = BinaryTree(tree_nodes)
-    print(rob(tree.root))
+    # print(rob(tree.root))
