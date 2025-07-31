@@ -129,9 +129,25 @@ def _flood_fill_rec(grid, curr_color, sr, sc, target):
     return grid
 
 
+def rob(root):
+    return max(_rob_rec(root))
+
+
+def _rob_rec(root):
+    if root == None or root.data == None:
+        return [0, 0]
+    
+    left_values = _rob_rec(root.left)
+    right_values = _rob_rec(root.right)
+    include = root.data + left_values[1] + right_values[1]
+    exclude = max(left_values) + max(right_values)
+    
+    return [include, exclude]
+
+
 if __name__ == "__main__":
     # do stuff
-    values = [3, 2, 3, None, 3, None, 1]
+    values = [5, 8, 17, 12, 11, 2, 4]
     tree_nodes = [TreeNode(val) for val in values]
     tree = BinaryTree(tree_nodes)
-    # print(rob(tree.root))
+    print(rob(tree.root))
