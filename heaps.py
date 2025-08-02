@@ -1,6 +1,7 @@
 from heapq import heappush, heappop, heappushpop, heapreplace
 from collections import Counter
 from math import sqrt
+from typing import List
 
 """
 FUNCTION findTopKElements(arr, k):
@@ -159,5 +160,76 @@ def minimum_machines(tasks):
     return len(min_heap)
 
 
+def maximum_capital(c: int, k: int, capitals: List[int], profits: List[int]) -> int:
+    max_heap = []
+    min_heap = []
+    current_capital = c
+
+    for index, capital in enumerate(capitals):
+        heappush(min_heap, (capital, index))
+
+    for _ in range(k):
+        while min_heap and min_heap[0][0] <= current_capital:
+            capital, index = heappop(min_heap)
+            heappush(max_heap, -profits[index])
+        if not max_heap:
+            return current_capital
+        else:
+            profit = heappop(max_heap)
+            current_capital += -profit
+
+    return current_capital
+
+
+def median_sliding_window(nums, k):
+    if k == 1:
+        return nums
+
+    min_heap = []
+    max_heap = []
+    res = []
+
+    for i in range(k):
+        heappush(max_heap, -nums[i])
+
+    for _ in range(k // 2):
+        curr_val = heappop(max_heap)
+        heappush(min_heap, -curr_val)
+
+    if len(min_heap) == len(max_heap):
+        res.append((min_heap[0] + -max_heap[0]) / 2.0)
+    else:
+        res.append(-max_heap[0] / 1.0)
+
+    for i in range(1, len(nums) - k + 1):
+        if min_heap and min_heap[0] == nums[i - 1]:
+            heappop(min_heap)
+        elif max_heap and -max_heap[0] == nums[i - 1]:
+            heappop(max_heap)
+        # add the next element (i + k - 1)
+        # to add element
+        # check max heap
+        to_add = nums[i + k - 1]
+        if max_heap and -to_add <= -max_heap[0]:
+            heappush(max_heap, -to_add)
+        else:
+            heappush(min_heap, to_add)
+        # if less than max heap, add to max heap - else min
+        # rebalancing step
+        # max heap is either == or +1 the min size
+        if len(min_heap) > len(max_heap) + 1:
+            to_move = heappop(min_heap)
+            heappush(max_heap, -to_move)
+        elif len(max_heap) > len(min_heap) + 1:
+            to_move = heappop(max_heap)
+            heappush(min_heap, -to_move)
+        # calc median
+        if k % 2 == 0:
+            res.append((min_heap[0] + -max_heap[0]) / 2.0)
+        else:
+            res.append(-max_heap[0] / 1.0)
+    return res
+
+
 if __name__ == "__main__":
-    print(reorganize_string("aaabc"))
+    print(median_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
