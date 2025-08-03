@@ -182,53 +182,76 @@ def maximum_capital(c: int, k: int, capitals: List[int], profits: List[int]) -> 
 
 
 def median_sliding_window(nums, k):
-    if k == 1:
-        return nums
-
-    min_heap = []
+    """This problem stumped me"""
+    medians = []
+    outgoing_num = {}
     max_heap = []
-    res = []
+    min_heap = []
 
     for i in range(k):
-        heappush(max_heap, -nums[i])
+        heappush(max_heap, -1 * nums[i])
 
-    for _ in range(k // 2):
-        curr_val = heappop(max_heap)
-        heappush(min_heap, -curr_val)
+    for i in range(k // 2):
+        element = heappop(max_heap)
+        heappush(min_heap, -1 * element)
 
-    if len(min_heap) == len(max_heap):
-        res.append((min_heap[0] + -max_heap[0]) / 2.0)
-    else:
-        res.append(-max_heap[0] / 1.0)
+    balance = 0
+    i = k
+    while True:
+        if k % 2 == 1:
+            medians.append(-max_heap[0] / 1.0)
+        else:
+            medians.append((-max_heap[0] + min_heap[0]) / 2.0)
 
-    for i in range(1, len(nums) - k + 1):
-        if min_heap and min_heap[0] == nums[i - 1]:
+        if i >= len(nums):
+            break
+
+        out_num = nums[i - k]
+        in_num = nums[i]
+        i += 1
+
+        if out_num <= (max_heap[0] * -1):
+            balance -= 1
+        else:
+            balance += 1
+
+        if out_num in outgoing_num:
+            outgoing_num[out_num] = outgoing_num[out_num] + 1
+        else:
+            outgoing_num[out_num] = 1
+
+        if max_heap and in_num <= (max_heap[0] * -1):
+            balance += 1
+            heappush(max_heap, in_num * -1)
+        else:
+            balance -= 1
+            heappush(min_heap, in_num)
+
+        if balance < 0:
+            heappush(max_heap, (-1 * min_heap[0]))
             heappop(min_heap)
-        elif max_heap and -max_heap[0] == nums[i - 1]:
+        elif balance > 0:
+            heappush(min_heap, (-1 * max_heap[0]))
             heappop(max_heap)
-        # add the next element (i + k - 1)
-        # to add element
-        # check max heap
-        to_add = nums[i + k - 1]
-        if max_heap and -to_add <= -max_heap[0]:
-            heappush(max_heap, -to_add)
-        else:
-            heappush(min_heap, to_add)
-        # if less than max heap, add to max heap - else min
-        # rebalancing step
-        # max heap is either == or +1 the min size
-        if len(min_heap) > len(max_heap) + 1:
-            to_move = heappop(min_heap)
-            heappush(max_heap, -to_move)
-        elif len(max_heap) > len(min_heap) + 1:
-            to_move = heappop(max_heap)
-            heappush(min_heap, -to_move)
-        # calc median
-        if k % 2 == 0:
-            res.append((min_heap[0] + -max_heap[0]) / 2.0)
-        else:
-            res.append(-max_heap[0] / 1.0)
-    return res
+
+        balance = 0
+
+        while (
+            (max_heap[0] * -1) in outgoing_num 
+            and (outgoing_num[(max_heap[0] * -1)] > 0
+        )):
+            outgoing_num[max_heap[0] * -1] -= 1
+            heappop(max_heap)
+
+        while (
+            min_heap
+            and min_heap[0] in outgoing_num
+            and (outgoing_num[min_heap[0]] > 0)
+        ):
+            outgoing_num[min_heap[0]] -= 1
+            heappop(min_heap)
+
+    return medians
 
 
 if __name__ == "__main__":
