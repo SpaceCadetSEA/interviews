@@ -308,6 +308,43 @@ def find_exit_column(grid: List[List[int]]) -> List[int]:
 #     return result
 
 
+def count_unguarded(
+    m: int, n: int, guards: List[List[int]], walls: List[List[int]]
+) -> int:
+    """
+    Leetcode problem:
+    https://leetcode.com/problems/count-unguarded-cells-in-the-grid/description/
+
+    key insight is to minimize the iteration over the matrix when calculating
+    the safe spaces... my initial implementation which did a depth first 
+    approach visiting all other rows and cols next to the guard cell.
+
+    changing the pattern to identify the directions you can travel and 
+    iterating over them for each guard decreased the runtime from 3s to 400ms
+    """
+    matrix = [[0 for _ in range(n)] for _ in range(m)]
+    for row, col in walls:
+        matrix[row][col] = 1
+    for row, col in guards:
+        matrix[row][col] = 1
+
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    for row, col in guards:
+        for dr, dc in directions:
+            curr_row, curr_col = row + dr, col + dc
+            while 0 <= curr_row < m and 0 <= curr_col < n:
+                if matrix[curr_row][curr_col] == 1:
+                    break
+                if matrix[curr_row][curr_col] == 0:
+                    matrix[curr_row][curr_col] = 2
+                curr_row += dr
+                curr_col += dc
+
+    free_spaces = sum(1 for r in range(m) for c in range(n) if matrix[r][c] == 0)
+
+    return free_spaces
+
+
 if __name__ == "__main__":
     linked_list = LinkedList([1, 2, 3, 4, 5])
     # display(reverse_k_groups(linked_list.head, 2))

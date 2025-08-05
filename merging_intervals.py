@@ -1,5 +1,6 @@
-from typing import List
+from collections import Counter, deque
 from heapq import heappop, heappush
+from typing import List
 
 
 def insert_interval(existing_intervals, new_interval):
@@ -34,7 +35,7 @@ def insert_interval(existing_intervals, new_interval):
     return output
 
 
-def merge_intervals(intervals): 
+def merge_intervals(intervals):
     intervals.sort(key=lambda x: x[0])
     output = []
 
@@ -65,7 +66,7 @@ def attend_all_meetings(intervals):
         if start < curr_stop:
             return False
         curr_stop = stop
-    
+
     return True
 
 
@@ -150,9 +151,30 @@ def partition_label_2(s):
 
 
 def intervals_intersection(interval_list_a, interval_list_b):
-    
-    return []
+    if not interval_list_a or not interval_list_b:
+        return []
 
+    res = []
+    index_a = index_b = 0
+    while index_a < len(interval_list_a) and index_b < len(interval_list_b):
+        merge_start = max(interval_list_a[index_a][0], interval_list_b[index_b][0])
+        merge_stop = min(interval_list_a[index_a][1], interval_list_b[index_b][1])
+
+        if merge_start <= merge_stop:
+            res.append([merge_start, merge_stop])
+
+        if interval_list_a[index_a][1] < interval_list_b[index_b][1]:
+            index_a += 1
+        else:
+            index_b += 1
+
+    return res
+
+
+def least_interval(tasks, n):
+    frequencies = Counter(tasks)
+    
+    
 
 if __name__ == "__main__":
-    print(partition_label_2("ababcbacadefegdehijhklij"))
+    print(least_interval(["A", "A", "A", "B", "B", "C", "C"], 1))
