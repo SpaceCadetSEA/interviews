@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from math import inf
-from data_structures.LinkedList import LinkedList, display
+from data_structures.linked_list import LinkedList, display
 
 
 def is_palindrome(word: str) -> bool:

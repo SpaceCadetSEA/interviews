@@ -2,6 +2,8 @@ from collections import Counter, deque
 from heapq import heappop, heappush
 from typing import List
 
+from data_structures.intervals import Interval
+
 
 def insert_interval(existing_intervals, new_interval):
     output = []
@@ -173,8 +175,91 @@ def intervals_intersection(interval_list_a, interval_list_b):
 
 def least_interval(tasks, n):
     frequencies = Counter(tasks)
+    frequencies = [count for count in frequencies.values()]
+    frequencies.sort(reverse=True)
+
+    top_count = frequencies[0]
+    max_gaps = top_count - 1
+    idle_slots = max_gaps * n
+
+    for i in range(1, len(frequencies)):
+        count = frequencies[i]
+        idle_slots -= min(count, max_gaps)
+
+    idle_slots = max(idle_slots, 0)
+
+    return idle_slots + len(tasks)
+
+
+# The input parameter `schedule` is a list of lists, where each inner
+# list contains `Interval` objects representing an employee's schedule.
+def employee_free_time_min_heap(schedule):
+    min_heap = []
+    heappush(min_heap, schedule[0][0])
+    prev_interval = schedule[0][0].end
+    res = []
+
+    for employee in schedule:
+        for meeting in employee:
+            prev_interval = min(prev_interval, meeting.end)
+            heappush(min_heap, meeting)
+
+    while min_heap:  # O(N log N)
+        curr_meeting = heappop(min_heap)
+        if curr_meeting.start > prev_interval:
+            res.append(Interval(prev_interval, curr_meeting.start))
+        prev_interval = max(curr_meeting.end, prev_interval)
+
+    return res
+
+
+def employee_free_time_merged_interval(schedule):
+    schedules = [meeting for employee in schedule for meeting in employee]
+    schedules.sort(key=lambda x: x[0])
+    merged_intervals = [schedules[0]]
+    for i in range(1, len(schedules)):
+        start, stop = schedules[i].start, schedules[i].end
+        merged_start, merged_stop = merged_intervals[-1].start, merged_intervals[-1].end
+        if start <= merged_stop:
+            merged_intervals[-1] = Interval(min(merged_start, start), max(merged_stop, stop))
+        else:
+            merged_intervals.append(schedules[i])
+        
+    result = []
+    _, curr_stop = merged_intervals[0].start, merged_intervals[0].end
+    for i in range(1, len(merged_intervals)):
+        start, stop = merged_intervals[i].start, merged_intervals[i].end
+        result.append(Interval(curr_stop, start))
+        curr_stop = stop
     
-    
+    return result
+
 
 if __name__ == "__main__":
-    print(least_interval(["A", "A", "A", "B", "B", "C", "C"], 1))
+    print(
+        least_interval(
+            [
+                "A",
+                "B",
+                "C",
+                "O",
+                "Q",
+                "C",
+                "Z",
+                "O",
+                "X",
+                "C",
+                "W",
+                "Q",
+                "Z",
+                "B",
+                "M",
+                "N",
+                "R",
+                "L",
+                "C",
+                "J",
+            ],
+            10,
+        )
+    )

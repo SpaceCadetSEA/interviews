@@ -1,6 +1,6 @@
 from typing import List
 
-from data_structures.LinkedList import LinkedList, display, ListNode
+from data_structures.linked_list import LinkedList, display, ListNode
 
 
 def fold_linked_list(head: ListNode) -> ListNode:
