@@ -264,22 +264,46 @@ def find_min_in_rotated_array(arr: List[int]) -> int:
     return -1
 
 
+def threeSum(nums: List[int]) -> List[List[int]]:
+    """
+    Leetcode problem:
+    https://leetcode.com/problems/3sum/description/
+
+    Key here is runtime. Our original solution was very inefficient in both 
+    checking if the thruple already existed in our result and also iterating
+    on combinations that would create the same thruple group.
+
+    Using while loops properly set up to consume the index changes between
+    first and last pointers, leds to a big speedup and reduces unnecessary
+    visits to the inner while loop (first < last) 
+    """
+    nums.sort()  # TimSort - O(n log n)
+    i = 0
+    res = []
+    for i, num in enumerate(nums):
+        if num > 0 or (i > 0 and nums[i - 1] == num):
+            continue
+        first, last = i + 1, len(nums) - 1
+        while first < last:
+            sum_of_values = num + nums[first] + nums[last]
+            if sum_of_values == 0:
+                thruple = [num, nums[first], nums[last]]
+                res.append(thruple)
+                # better way to consume similar answers from duplicated values in array
+                while first < last and nums[first] == nums[first + 1]:
+                    first += 1
+                while first < last and nums[last] == nums[last - 1]:
+                    last -= 1
+            elif sum_of_values > 0:
+                last -= 1
+            else:
+                first += 1
+    return res
+
+
 if __name__ == "__main__":
     # linked_list = LinkedList([69,8,49, 105,106,116,112])
     # display(middle_of_linked_list(linked_list.head))
     # print(detect_cycle_in_array([2, 3, 1, 4, 5, 9, 7]))
     # print(is_happy_number(4))
-    print(
-        find_min_in_rotated_array(
-            [
-                6,
-                7,
-                8,
-                9,
-                1,
-                2,
-                3,
-                4,
-            ]
-        )
-    )
+    print(threeSum([-4,-2,-2,-2,0,1,2,2,2,3,3,4,4,6,6]))
