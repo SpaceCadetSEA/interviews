@@ -4,6 +4,24 @@ class ListNode:
         self.val = val
         self.next = next
 
+    def __eq__(self, other):
+        return self.val == other.val
+    
+    def __ne__(self, other):
+        return self.val != other.val
+    
+    def __lt__(self, other):
+        return self.val < other.val
+
+    def __gt__(self, other):
+        return self.val > other.val
+
+    def __le__(self, other):
+        return self.val <= other.val
+
+    def __ge__(self, other):
+        return self.val >= other.val
+
 
 class LinkedList:
     def __init__(self, values=None):

@@ -1,3 +1,5 @@
+from collections import deque
+import itertools
 from typing import List
 
 from data_structures.linked_list import LinkedList, display, ListNode
@@ -345,17 +347,44 @@ def count_unguarded(
     return free_spaces
 
 
+def totalStrength(strength: List[int]) -> int:
+    """
+    Leetcode problem: https://leetcode.com/problems/sum-of-total-strength-of-wizards/
+
+    Naive solution exceeds time limit due to O(N^2) runtime.
+    Need to investigate prefixsums and monotonic stacks to get the correct
+    solution.
+
+    (more of a math problem than a coding question)
+    """
+    MOD = 10**9 + 7
+    n = len(strength)
+
+    # i, i:i+1, ... i:n-1
+    power = []
+    subsets = sub_lists(strength)
+
+    for wizards in subsets:
+        power.append(min(wizards) * sum(wizards))
+
+    # i = 0
+    # while i < n:  # O(N)
+    #     for j in range(n - i):  # O(N)
+    #         wizard_sublist = strength[i:i+j+1]
+    #         power = min(wizard_sublist) * sum(wizard_sublist)
+    #         sets_of_wizards.append(power)
+    #     i += 1
+
+    return sum(wizards) % MOD
+
+def sub_lists(xs):
+    n = len(xs)
+    indices = list(range(n+1))
+    for i,j in itertools.combinations(indices,2):
+        yield xs[i:j]
+
+
 if __name__ == "__main__":
     linked_list = LinkedList([1, 2, 3, 4, 5])
     # display(reverse_k_groups(linked_list.head, 2))
     # print(calculator("12 - (6 + 2) + 5"))
-    print(
-        find_exit_column(
-            [
-                [1, 1, 1, -1, 1, 1],
-                [-1, -1, 1, -1, -1, 1],
-                [1, 1, 1, -1, 1, 1],
-                [-1, -1, -1, 1, 1, -1],
-            ]
-        )
-    )
