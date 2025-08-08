@@ -8,33 +8,28 @@ def jump_game(nums):
 
 
 def gas_station_journey(gas, cost):
+    """
+    Deceptively simple solution. 
+    
+    We iterate over the list a single time and just check the gas - cost at
+    each index, incrementing starting index when the current is less than 0.
+    """
     if sum(cost) > sum(gas):
         return -1
-    if len(gas) == 1:
-        return 0
 
-    start_idx = 0
-    while gas[start_idx] - cost[start_idx] < 0:
-        start_idx += 1
+    current_gas = starting_idx = 0
 
-    # at our first candidate
-    # try to iterate through the whole list
-    # if we fail, move to the next one if it exists
-    curr_gas = gas[start_idx] - cost[start_idx]
-    curr_index = start_idx + 1
-    while start_idx < len(gas):
-        if curr_index == start_idx:
-            return start_idx
-        if curr_index >= len(gas):
-            curr_index = 0
-        curr_gas += gas[curr_index] - cost[curr_index]
-        if curr_gas < 0:
-            start_idx += 1
-            curr_index = start_idx
-            curr_gas = gas[start_idx] - cost[start_idx]
-        curr_index += 1
-    
-    return -1
+    for i in range(len(gas)):
+        current_gas += gas[i] - cost[i]
+        if current_gas < 0:
+            current_gas = 0
+            starting_idx = i + 1
+
+    return starting_idx
+
+
+def min_refuel_stops(target, start_fuel, stations):
+    return 0
 
 
 if __name__ == "__main__":
