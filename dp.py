@@ -82,17 +82,37 @@ def _longest_subsequence_bst(target, tails):
 
 
 def climb_stairs(n):
+    """
+    space/time: O(n)
+    """
     lookup = [0] * n
-
     for i in range(n - 1, -1, -1):
+        if i == n:
+            lookup[i] = 1
         if i == n - 1:
             lookup[i] = 1
-        elif i == n - 2:
-            lookup[i] = 2
         else:
             lookup[i] = lookup[i + 1] + lookup[i + 2]
-
     return lookup[0]
+
+
+def climb_stairs(n):
+    cache = [-1] * (n + 1)
+    return _climb_stairs_rec(n, cache)
+
+
+def _climb_stairs_rec(n, cache):
+    # base cases
+    if n == 0:
+        return 1
+    elif n == 1:
+        return 1
+    # check cache
+    if cache[n] > 0:
+        return cache[n]
+    # calculate new values
+    cache[n] = _climb_stairs_rec(n - 1) + _climb_stairs_rec(n - 2)
+    return cache[n]
 
 
 if __name__ == "__main__":
