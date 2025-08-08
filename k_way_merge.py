@@ -87,7 +87,7 @@ def merge_sorted(nums1, m, nums2, n):
     return nums1
 
 
-def merge_sorted(nums1, m, nums2, n):
+def merge_sorted_solution(nums1, m, nums2, n):
     """
     Their solution is nice because it uses range to count down
     instead of up.
@@ -151,7 +151,7 @@ def k_smallest_number(lists, k):
             heappush(min_heap, (lists[i][0], i, 0))
     curr_val = 0
     for i in range(k):
-        if not heap:
+        if not min_heap:
             break
         curr_val, list_index, sublist_index = heappop(min_heap)
         if sublist_index < len(lists[list_index]) - 1:
