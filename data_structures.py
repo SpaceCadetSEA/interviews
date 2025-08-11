@@ -384,7 +384,28 @@ def sub_lists(xs):
         yield xs[i:j]
 
 
+def binary_search_matrix(nums, target):
+    if len(nums) == 0:
+        return False
+    m = len(nums)
+    n = len(nums[0])
+    start, end = 0, m * n - 1
+    while start < end:
+        mid = (end + start) // 2
+        # translating row and col from the midpoint value
+        row = mid // m
+        col = mid % m
+        if nums[row][col] == target:
+            return True
+        if nums[row][col] < target:
+            start = mid + 1
+        else:
+            end = mid - 1
+    return False
+
+
 if __name__ == "__main__":
     linked_list = LinkedList([1, 2, 3, 4, 5])
     # display(reverse_k_groups(linked_list.head, 2))
     # print(calculator("12 - (6 + 2) + 5"))
+    print(binary_search_matrix([[1,2,3,4],[5,6,7,8],[10,11,12,13]], 10))
