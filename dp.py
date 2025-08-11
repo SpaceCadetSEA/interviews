@@ -317,6 +317,10 @@ def longest_common_subsequence_helper(str1, str2, i, j, dp):
 
 
 def longest_palindromic_substring(s):
+    """
+    This is a beast of a solution... Claude recommends the "expand-from-center"
+    approach as it uses constant space and is "more intuitive".
+    """
     if len(s) == 0:
         return ""
     n = len(s)
@@ -344,11 +348,166 @@ def longest_palindromic_substring(s):
     return s[results[0] : results[1] + 1]
 
 
+def longest_palindromic_subsequence_center_expansion(s):
+    if not s:
+        return ""
+
+    start, max_len = 0, 1
+    for i in range(len(s)):
+        # base case 1 - odd palindrome
+        len1 = expand_around_center(s, i, i)
+        # base case 2 - even palindrome
+        len2 = expand_around_center(s, i, i + 1)
+        
+        current_max = max(len1, len2)
+        if current_max > max_len:
+            # calculate our start value
+            start = i - (current_max - 1) // 2
+            
+    return s[start : start + max_len]
+
+
+def expand_around_center(s, left, right):
+    while left >= 0 and right < len(s) and s[left] == s[right]:
+        left -= 1
+        right += 1
+    return right - left - 1 # length of palindrome
+
+
 def max_product(nums):
+    # O(N) time, O(1) space
     if len(nums) == 0:
         return 0
-    pass
+    max_so_far = min_so_far = nums[0]
+    result = max_so_far
 
+    for i in range(1, len(nums)):
+        # second variable for curr_max_so_far is needed to prevent the
+        # computation of max_so_far from overwriting the previous value before
+        # we use it in the min_so_far calculation.
+        curr_max_so_far = max_so_far
+        max_so_far = max(nums[i], nums[i] * max_so_far, nums[i] * min_so_far)
+        min_so_far = min(nums[i], nums[i] * min_so_far, nums[i] * curr_max_so_far)
+        result = max(result, max_so_far)
+
+    return result
+
+
+def count_palindromic_substrings_middle_out(s):
+    """
+    This O(N^2) time and O(1) space
+    """
+    if not s:
+        return 0
+
+    count = 0
+    # expand out pattern with odd-sized palindromes
+    for i in range(len(s)):
+        count += expand_from_center(s, i, i)
+    # expand out pattern with even-sized palindromes
+    for i in range(len(s) - 1):
+        count += expand_from_center(s, i, i + 1)
+
+    return count
+
+
+def expand_from_center(s, left, right):
+    curr_count = 0
+    while left >= 0 and right < len(s) and s[left] == s[right]:
+        curr_count += 1
+        left -= 1
+        right += 1
+    return curr_count
+
+
+def count_palindromic_substrings(s):
+    """
+    This solution is both O(N^2) time and space complexity
+    """
+    if not s:
+        return 0
+    count = 0
+
+    dp = [[False for _ in range(len(s))] for _ in range(len(s))]
+    # Base case 1: single letters
+    for i in range(len(s)):
+        dp[i][i] = True
+        count += 1
+    # Base case 2: pairs of letters
+    for i in range(len(s) - 1):
+        if s[i] == s[i + 1]:
+            dp[i][i + 1] = True
+            count += 1
+    # Iterate over a gradually increasing window of characters
+    for length in range(3, len(s) + 1):
+        i = 0  # i represents our starting index, while length is our window
+        for j in range(length - 1, len(s)):
+            dp[i][j] = s[i] == s[j] and dp[i + 1][j - 1]
+            if dp[i][j]:
+                count += 1
+            i += 1
+    return count
+
+
+def unique_paths(m, n):
+    """
+    O(M x N) time and space complexity
+    """
+    if m == 0 or n == 0:
+        return 0
+
+    # This creation of the dp cache is much simplier, it precludes our need to
+    # do initial passes that set row and columns as 1.
+    cache = [[1 for _ in range(n)] for _ in range(m)]
+
+    # It's easier to iterate from the front and work through the entire matrix
+    for row in range(1, m):
+        for col in range(1, n):
+            cache[row][col] = cache[row][col - 1] + cache[row - 1][col]
+
+    return cache[m - 1][n - 1]
+
+
+def unique_paths_rolling_array(m, n):
+    """
+    O(M x N) time, O(N) space solution
+    
+    Very clever approach that reuses a single list of N elements to keep a 
+    rolling total and computes the next value in the sequence using the 
+    previous column value and the updated current column.
+    """
+    rolling_array = [1] * n
+
+    for _ in range(1, m):
+        for col in range(1, n):
+            rolling_array[col] += rolling_array[col - 1]
+
+    return rolling_array[-1]
+
+
+def word_break(s, word_dict):
+    """
+    O(N^2) time, O(N) space
+    
+    Take another look at how it is reusing precomputed values...
+    WE NEED TO LEARN THE PATTERN
+    """
+    if not s:
+        return True
+    dp = [False for _ in range(len(s) + 1)]
+    dp[0] = True
+    # These loops find all possible prefixes of the input string
+    for i in range(1, len(s) + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_dict:
+                dp[i] = True
+                break
+    return dp[len(s)]
+    
 
 if __name__ == "__main__":
-    print(longest_palindromic_substring("aabbccddccbbae"))
+    print(
+        word_break(
+            "raincoats", ["rain", "oats", "coat", "s", "rains", "oat", "coats", "c"]
+        )
+    )
