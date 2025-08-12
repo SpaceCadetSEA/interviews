@@ -548,6 +548,10 @@ def max_sub_array(nums):
 
 
 def max_sub_array_constant(nums):
+    """
+    Constant time converts our list of stored results for the last subarray
+    max to a 
+    """
     if not nums:
         return 0
     n = len(nums)
