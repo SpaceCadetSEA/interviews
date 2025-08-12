@@ -81,7 +81,7 @@ def _longest_subsequence_bst(target, tails):
     return left
 
 
-def climb_stairs_top_down(n):
+def climb_stairs_bottom_up(n):
     """
     space/time: O(n)
     """
@@ -96,7 +96,7 @@ def climb_stairs_top_down(n):
     return lookup[0]
 
 
-def climb_stairs_bottom_up(n):
+def climb_stairs_top_down(n):
     cache = [-1] * (n + 1)
     return _climb_stairs_rec(n, cache)
 
@@ -271,9 +271,8 @@ def longest_common_subsequence_bottom_up(str1: str, str2: str):
     n = len(str2)
     cache = [[0 for _ in range(n + 1)] for _ in range(m + 1)]
     for i in range(m - 1, -1, -1):
-        for j in range(
-            n - 1, -1, -1
-        ):  # is there a way to update this so we don't visit every one?
+        for j in range(n - 1, -1, -1):
+            # is there a way to update this so we don't visit every one?
             if str1[i] == str2[j]:
                 cache[i][j] = 1 + cache[i + 1][j + 1]
                 continue
@@ -550,7 +549,7 @@ def max_sub_array(nums):
 def max_sub_array_constant(nums):
     """
     Constant time converts our list of stored results for the last subarray
-    max to a 
+    max to a
     """
     if not nums:
         return 0
@@ -563,5 +562,72 @@ def max_sub_array_constant(nums):
     return curr_max
 
 
+def calculate_minimum_hp(dungeon):
+    if not dungeon or len(dungeon[0]) == 0:
+        return 0
+    if len(dungeon[0]) == 1:
+        return abs(dungeon[0][0]) + 1
+
+    m = len(dungeon)
+    n = len(dungeon[0])
+    # too much pattern matching without understanding why
+    # when we instantiated our table (dp) to m + 1 and n + 1
+    dp = [[0 for _ in range(n)] for _ in range(m)]
+    dp[m - 1][n - 1] = max(1, 1 - dungeon[m - 1][n - 1])
+
+    # two base cases to consider, when we can only move right or down
+    # aka - the edges of the matrix
+    for i in range(m - 2, -1, -1):
+        dp[i][n - 1] = max(1, dp[i + 1][n - 1] - dungeon[i][n - 1])
+    for j in range(n - 2, -1, -1):
+        dp[m - 1][j] = max(1, dp[m - 1][j + 1] - dungeon[m - 1][j])
+
+    # Looping from m - 2 and n - 2
+    for i in range(m - 2, -1, -1):
+        for j in range(n - 2, -1, -1):
+            dp[i][j] = max(
+                1, min(dp[i + 1][j] - dungeon[i][j], dp[i][j + 1] - dungeon[i][j])
+            )
+
+    return dp[0][0]
+
+
+def calculate_min_hp_top_down(dungeon):
+    m, n = len(dungeon), len(dungeon[0])
+    dp = [[-1] * n for _ in range(m)]
+    return _calc_min_hp_rec(0, 0, dungeon, dp)
+
+
+def _calc_min_hp_rec(i, j, dungeon, dp):
+    m, n = len(dungeon), len(dungeon[0])
+    if i == m - 1 and j == n - 1:
+        return max(1, 1 - dungeon[i][j])
+    if i >= m or j >= n:
+        return float("inf")
+    if dp[i][j] != -1:
+        return dp[i][j]
+
+    right = _calc_min_hp_rec(i, j + 1, dungeon, dp)
+    down = _calc_min_hp_rec(i + 1, j, dungeon, dp)
+
+    min_health = min(right, down) - dungeon[i][j]
+    dp[i][j] = max(1, min_health)
+
+    return dp[i][j]
+
+
+def find_max_knapsack_profit(capacity, weights, values):
+    if not weights or capacity < min(weights):
+        return 0
+    w = len(weights)
+    dp = [0] * (capacity + 1)
+    
+    for i in range(1, w + 1):
+        lower_limit = weights[i - 1]
+        for j in range(capacity, lower_limit - 1, -1):
+            dp[j] = max(dp[j], dp[j - lower_limit] + values[i - 1])
+
+    return dp[capacity]
+
 if __name__ == "__main__":
-    print(num_of_decodings("11344"))
+    print(find_max_knapsack_profit(6 , [1,2,3,5] , [1,5,4,8]))
