@@ -358,12 +358,12 @@ def longest_palindromic_subsequence_center_expansion(s):
         len1 = expand_around_center(s, i, i)
         # base case 2 - even palindrome
         len2 = expand_around_center(s, i, i + 1)
-        
+
         current_max = max(len1, len2)
         if current_max > max_len:
             # calculate our start value
             start = i - (current_max - 1) // 2
-            
+
     return s[start : start + max_len]
 
 
@@ -371,7 +371,7 @@ def expand_around_center(s, left, right):
     while left >= 0 and right < len(s) and s[left] == s[right]:
         left -= 1
         right += 1
-    return right - left - 1 # length of palindrome
+    return right - left - 1  # length of palindrome
 
 
 def max_product(nums):
@@ -471,9 +471,9 @@ def unique_paths(m, n):
 def unique_paths_rolling_array(m, n):
     """
     O(M x N) time, O(N) space solution
-    
-    Very clever approach that reuses a single list of N elements to keep a 
-    rolling total and computes the next value in the sequence using the 
+
+    Very clever approach that reuses a single list of N elements to keep a
+    rolling total and computes the next value in the sequence using the
     previous column value and the updated current column.
     """
     rolling_array = [1] * n
@@ -488,7 +488,7 @@ def unique_paths_rolling_array(m, n):
 def word_break(s, word_dict):
     """
     O(N^2) time, O(N) space
-    
+
     Take another look at how it is reusing precomputed values...
     WE NEED TO LEARN THE PATTERN
     """
@@ -503,11 +503,61 @@ def word_break(s, word_dict):
                 dp[i] = True
                 break
     return dp[len(s)]
-    
+
+
+def num_of_decodings(decode_str):
+    """
+    time: O(N)
+    space: O(N)
+    """
+    if not decode_str or decode_str[0] == "0":
+        return 0
+    n = len(decode_str)
+    res = [0] * (n + 1)
+    # be explicit about the base cases...
+    # res[0] represents the empty string
+    res[0] = 1
+    # res[1] represents the single digit string which must be valid if the
+    # first element in decode_str is not 0.
+    if decode_str[0] > "0":
+        res[1] = 1
+    # with our two base casses, we can start iterating
+    for i in range(2, n + 1):
+        # like climbing stairs, we look back one and two places in our cache.
+        # first we eval the single character
+        first = decode_str[i - 1 : i]
+        # then we evaluate two character strings
+        second = decode_str[i - 2 : i]
+        # separate rules for the single and double digit strings
+        if first > "0":
+            res[i] = res[i - 1]
+        if "10" <= second <= "26":
+            res[i] += res[i - 2]
+    return res[n]
+
+
+def max_sub_array(nums):
+    if not nums:
+        return 0
+    n = len(nums)
+    res = [-math.inf] * (n + 1)
+    res[0] = nums[0]
+    for i in range(1, n):
+        res[i] = max(nums[i], nums[i] + res[i - 1])
+    return max(res)
+
+
+def max_sub_array_constant(nums):
+    if not nums:
+        return 0
+    n = len(nums)
+    curr_max = nums[0]
+    curr_subarray_max = nums[0]
+    for i in range(1, n):
+        curr_subarray_max = max(nums[i], nums[i] + curr_subarray_max)
+        curr_max = max(curr_max, curr_subarray_max)
+    return curr_max
+
 
 if __name__ == "__main__":
-    print(
-        word_break(
-            "raincoats", ["rain", "oats", "coat", "s", "rains", "oat", "coats", "c"]
-        )
-    )
+    print(num_of_decodings("11344"))
