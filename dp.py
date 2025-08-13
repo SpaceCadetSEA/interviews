@@ -563,6 +563,12 @@ def max_sub_array_constant(nums):
 
 
 def calculate_minimum_hp(dungeon):
+    """
+    Leetcode problem:
+    https://leetcode.com/problems/dungeon-game/
+
+    This was a hard dynamic programming question
+    """
     if not dungeon or len(dungeon[0]) == 0:
         return 0
     if len(dungeon[0]) == 1:
@@ -621,7 +627,7 @@ def find_max_knapsack_profit(capacity, weights, values):
         return 0
     w = len(weights)
     dp = [0] * (capacity + 1)
-    
+
     for i in range(1, w + 1):
         lower_limit = weights[i - 1]
         for j in range(capacity, lower_limit - 1, -1):
@@ -629,5 +635,101 @@ def find_max_knapsack_profit(capacity, weights, values):
 
     return dp[capacity]
 
+
+def find_tribonacci(n):
+    return -1
+
+
+def find_tribonacci_naive(n):
+    """
+    Naive recursive solution
+    """
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    elif n == 2:
+        return 1
+    else:
+        return (
+            find_tribonacci_naive(n - 3)
+            + find_tribonacci_naive(n - 2)
+            + find_tribonacci_naive(n - 1)
+        )
+
+
+def find_tribonacci_top_down(n):
+    """
+    Linear DP
+    """
+    dp = {}
+    return find_tribonacci_helper(n + 1, dp)
+
+
+def find_tribonacci_helper(n, dp):
+    if n <= 1:
+        return 0
+    elif n == 2:
+        return 1
+    elif n == 3:
+        return 1
+
+    if n in dp:
+        return dp[n]
+
+    else:
+        dp[n] = (
+            find_tribonacci_helper(n - 3, dp)
+            + find_tribonacci_helper(n - 2, dp)
+            + find_tribonacci_helper(n - 1, dp)
+        )
+        return dp[n]
+
+
+def find_tribonacci_bottom_up(n):
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    dp = [0] * (n + 1)
+    dp[0] = 0
+    dp[1] = 1
+    dp[2] = 1
+
+    for i in range(3, n + 1):
+        dp[i] = dp[i - 3] + dp[i - 2] + dp[i - 1]
+        
+    return dp[n]
+
+
+def find_tribonacci_constant(n):
+    if n < 3:
+        return 1 if n > 0 else 0
+    
+    first, second, third = 0, 1, 1
+    for _ in range(2, n - 2):
+        first, second, third = second, third, first + second + third
+    return third
+
+
+def pascals_triangle(n):
+    """
+    Where n is the number of rows requested.
+    
+    Output: List[List[int]]
+    """
+    triangle = []
+    for i in range(n):
+        row = [1]
+        if i > 0:
+            prev_row = triangle[i - 1]
+            for j in range(1, i):
+                row.append(prev_row[j - 1] + prev_row[j])
+        if i > 0:
+            row.append(1)
+        triangle.append(row)
+    return triangle
+
+
 if __name__ == "__main__":
-    print(find_max_knapsack_profit(6 , [1,2,3,5] , [1,5,4,8]))
+    print(pascals_triangle(10))
