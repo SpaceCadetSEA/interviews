@@ -70,3 +70,10 @@ class TreeNode(Node):
 
     def add_child(self, node):
         self.children.append(node)
+
+
+class TrieNode():
+    ALPHA = 'abcdefghijklmnopqrstuvwzyz'
+    def __init__(self):
+        self.children = {}  # children key: letter, value: TrieNode
+        self.is_word = False

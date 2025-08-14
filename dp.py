@@ -636,10 +636,6 @@ def find_max_knapsack_profit(capacity, weights, values):
     return dp[capacity]
 
 
-def find_tribonacci(n):
-    return -1
-
-
 def find_tribonacci_naive(n):
     """
     Naive recursive solution
