@@ -29,7 +29,7 @@ def word_search(grid: List[List[str]], word: str) -> bool:
         for col in range(n):
             if grid[row][col] == word[0] and not word_found:
                 visited_nodes[row][col] = 1
-                word_found = _word_search_rec(grid, word[1:], (row, col), visited_nodes)
+                word_found = _word_search_rec(grid, word[1:], [row, col], visited_nodes)
                 visited_nodes[row][col] = 0
     return word_found
 

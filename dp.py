@@ -708,6 +708,15 @@ def find_tribonacci_constant(n):
     return third
 
 
+def find_fibonacci_constant(n):
+    if n < 2:
+        return 1 if n > 0 else 0
+    first, second = 0, 1
+    for _ in range(1, n - 1):
+        first, second = second, first + second
+    return second
+
+
 def pascals_triangle(n):
     """
     Where n is the number of rows requested.

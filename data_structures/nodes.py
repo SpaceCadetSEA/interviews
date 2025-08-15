@@ -36,7 +36,7 @@ class TreeNode(Node):
             parent_node=None,
             left_node=None,
             right_node=None,
-            children=None
+            children=[]
     ):
         super().__init__(value)
         self.parent_node = parent_node
@@ -73,7 +73,21 @@ class TreeNode(Node):
 
 
 class TrieNode():
-    ALPHA = 'abcdefghijklmnopqrstuvwzyz'
+
     def __init__(self):
-        self.children = {}  # children key: letter, value: TrieNode
+        # children key: letter, value: TrieNode
+        self.children = {}
         self.is_word = False
+        self.is_string = False
+
+
+class TrieNodeV2():
+
+    def __init__(self):
+        # Empty list of child nodes
+        self.children = []
+        # False indicates this node is not the end of a word
+        self.complete = False
+        # Create 26 child nodes for each letter of alphabet
+        for i in range(0, 26):
+            self.children.append(None)
