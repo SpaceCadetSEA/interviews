@@ -169,6 +169,7 @@ def find_strings(grid, words):
 def _find_strings_helper(trie_node, grid, prefix, row, col, found_words, nodes_seen):
     if trie_node.is_string and prefix not in found_words:
         found_words.add(prefix)
+        trie_node.is_string = False
 
     directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
     m = len(grid)
