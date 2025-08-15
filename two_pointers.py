@@ -301,6 +301,31 @@ def threeSum(nums: List[int]) -> List[List[int]]:
     return res
 
 
+def pancake_sort(arr):
+    """
+    leetcode (medium):
+    https://leetcode.com/problems/pancake-sorting/description/
+
+    just need some time to figure out the pointer and max relationship :)
+    """
+    p0, p1 = 0, len(arr) - 1
+
+    flips = []
+    while p0 <= p1:
+        curr_max = max(arr)  # O(N)
+        index_of_max = arr.index(curr_max)
+        if index_of_max == p1:
+            p1 -= 1
+        elif index_of_max < p1:
+            # rotate on index_of_max
+            arr[0:index_of_max+1] = reversed(arr[0:index_of_max+1])
+        elif index_of_max == p0:
+            arr[0:p1] = reversed(arr[0:p1])
+        else:
+            p1 += 1
+        
+    return flips
+
 if __name__ == "__main__":
     # linked_list = LinkedList([69,8,49, 105,106,116,112])
     # display(middle_of_linked_list(linked_list.head))

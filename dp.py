@@ -736,5 +736,37 @@ def pascals_triangle(n):
     return triangle
 
 
+from functools import lru_cache
+
+def beautifulNumbers(l: int, r: int) -> int:
+    """
+    leetcode (hard): https://leetcode.com/problems/count-beautiful-numbers/description/
+    """
+    return count_beautiful(r) - count_beautiful(l - 1)
+
+def count_beautiful(n):
+    digits = list(map(int, str(n)))
+
+    @lru_cache(maxsize=None)
+    def dp(pos, sum_, product, tight, leading_zero):
+        if pos == len(digits):
+            return int(not leading_zero and sum_ > 0 and product % sum_ == 0)
+        limit = digits[pos] if tight else 9
+        count = 0
+        # investigate the use of "tight" to mark whether we are in the upper bound or not
+        for d in range(limit + 1):
+            new_tight = tight and (d == limit)
+            new_leading_zero = leading_zero and d == 0
+            new_sum = sum_ + d
+            new_product = product if new_leading_zero else (product * d if d != 0 else 0)
+            count += dp(pos + 1, new_sum, new_product, new_tight, new_leading_zero)
+
+        return count
+
+    return dp(0, 0, 1, True, True)
+
+
+
+
 if __name__ == "__main__":
-    print(pascals_triangle(10))
+    print(beautifulNumbers(100, 200))
