@@ -2,7 +2,7 @@ class Node:
 
     def __init__(self, value):
         self.value = value
-        self.neighbors = []
+        self.neighbors = list()
 
     @property
     def val(self):
@@ -11,10 +11,6 @@ class Node:
     @property
     def data(self):
         return self.value
-    
-    @property
-    def neighbors(self):
-        return self.neighbors
 
 
 class ListNode(Node):

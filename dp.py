@@ -1,4 +1,6 @@
+from functools import cache
 import math
+from typing import List
 
 
 def coin_change(coins, total):
@@ -736,8 +738,6 @@ def pascals_triangle(n):
     return triangle
 
 
-from functools import lru_cache
-
 def beautifulNumbers(l: int, r: int) -> int:
     """
     leetcode (hard): https://leetcode.com/problems/count-beautiful-numbers/description/
@@ -747,7 +747,7 @@ def beautifulNumbers(l: int, r: int) -> int:
 def count_beautiful(n):
     digits = list(map(int, str(n)))
 
-    @lru_cache(maxsize=None)
+    @cache
     def dp(pos, sum_, product, tight, leading_zero):
         if pos == len(digits):
             return int(not leading_zero and sum_ > 0 and product % sum_ == 0)
@@ -766,7 +766,83 @@ def count_beautiful(n):
     return dp(0, 0, 1, True, True)
 
 
+def len_of_diagonal(grid: List[List[int]]) -> int:
+    """
+    leetcode (hard):
+    https://leetcode.com/problems/length-of-longest-v-shaped-diagonal-segment/description/
+    
+    Pretty straightforward DP problem. memoization occurs on the recursive function using @cache
+    """
+    m, n = len(grid), len(grid[0])
+
+    @cache
+    def len_of_v_helper(row, col, can_turn, direction, target):
+        # make sure we are in bounds...
+        # return 0 if not
+        if row < 0 or row > m - 1 or col < 0 or col > n - 1:
+            return 0
+        
+        if grid[row][col] != target:
+            return 0
+
+        # if we are in bounds, flip the target and check the 4 possible directions
+        #   and rotating or not.
+        directions = {0: (-1, -1), 1: (-1, 1), 2: (1, 1), 3: (1, -1)}
+        curr_direction = directions[direction]
+        new_direction = direction + 1 if direction < 3 else 0
+        turn_direction = directions[new_direction]
+        new_target = 2 if target == 0 else 0
+        if can_turn:
+            return 1 + max(
+                len_of_v_helper(
+                    row + curr_direction[0],
+                    col + curr_direction[1],
+                    can_turn,
+                    direction,
+                    new_target,
+                ),
+                len_of_v_helper(
+                    row + turn_direction[0],
+                    col + turn_direction[1],
+                    False,
+                    new_direction,
+                    new_target,
+                ),
+            )
+        return 1 + len_of_v_helper(
+            row + curr_direction[0],
+            col + curr_direction[1],
+            can_turn,
+            direction,
+            new_target,
+        )
+
+    longest = 0
+    for row in range(m):
+        for col in range(n):
+            if grid[row][col] == 1:
+                longest = max(
+                    longest,
+                    1
+                    + max(
+                        len_of_v_helper(row - 1, col - 1, True, 0, 2),
+                        len_of_v_helper(row - 1, col + 1, True, 1, 2),
+                        len_of_v_helper(row + 1, col + 1, True, 2, 2),
+                        len_of_v_helper(row + 1, col - 1, True, 3, 2),
+                    ),
+                )
+    return longest
 
 
 if __name__ == "__main__":
-    print(beautifulNumbers(100, 200))
+    print(
+        len_of_diagonal(
+            [
+                [2, 2, 2, 2, 2],
+                [2, 0, 2, 2, 0],
+                [2, 0, 1, 1, 0],
+                [1, 0, 2, 2, 2],
+                [2, 0, 0, 2, 2],
+            ]
+        )
+    )

@@ -1,5 +1,6 @@
-from typing import List, Tuple
 from math import inf
+from typing import List, Tuple
+
 from data_structures.linked_list import LinkedList, display
 
 
@@ -269,13 +270,13 @@ def threeSum(nums: List[int]) -> List[List[int]]:
     Leetcode problem:
     https://leetcode.com/problems/3sum/description/
 
-    Key here is runtime. Our original solution was very inefficient in both 
+    Key here is runtime. Our original solution was very inefficient in both
     checking if the thruple already existed in our result and also iterating
     on combinations that would create the same thruple group.
 
     Using while loops properly set up to consume the index changes between
     first and last pointers, leds to a big speedup and reduces unnecessary
-    visits to the inner while loop (first < last) 
+    visits to the inner while loop (first < last)
     """
     nums.sort()  # TimSort - O(n log n)
     i = 0
@@ -308,27 +309,27 @@ def pancake_sort(arr):
 
     just need some time to figure out the pointer and max relationship :)
     """
-    p0, p1 = 0, len(arr) - 1
-
+    end = len(arr) - 1
     flips = []
-    while p0 <= p1:
-        curr_max = max(arr)  # O(N)
-        index_of_max = arr.index(curr_max)
-        if index_of_max == p1:
-            p1 -= 1
-        elif index_of_max < p1:
-            # rotate on index_of_max
-            arr[0:index_of_max+1] = reversed(arr[0:index_of_max+1])
-        elif index_of_max == p0:
-            arr[0:p1] = reversed(arr[0:p1])
+
+    while end > 0:
+        max_idx = arr.index(max(arr[: end + 1]))
+        if max_idx == end:
+            end -= 1
+        elif max_idx == 0:
+            flips.append(end + 1)
+            arr = arr[: end + 1][::-1] + arr[end + 1 :]
+            end -= 1
         else:
-            p1 += 1
-        
+            flips.append(max_idx + 1)
+            arr = arr[: max_idx + 1][::-1] + arr[max_idx + 1 :]
+
     return flips
+
 
 if __name__ == "__main__":
     # linked_list = LinkedList([69,8,49, 105,106,116,112])
     # display(middle_of_linked_list(linked_list.head))
     # print(detect_cycle_in_array([2, 3, 1, 4, 5, 9, 7]))
     # print(is_happy_number(4))
-    print(threeSum([-4,-2,-2,-2,0,1,2,2,2,3,3,4,4,6,6]))
+    print(pancake_sort([1, 2, 3]))
