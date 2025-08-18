@@ -4,6 +4,6 @@ Getting a role in tech is not easy! (Especially if you're a bootcamp grad withou
 
 This repo contains all the code from my studies for various periods of technical interviewing.
 
-Follow along with Grokking the Blind 75 in python from educative.io
+Follow along with [Grokking the Blind 75 in python from educative.io](https://www.educative.io/path/blind-75-in-python)
 
 Other leetcode problems are scattered throughout with links to their questions.
