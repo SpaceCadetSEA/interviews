@@ -696,14 +696,14 @@ def find_tribonacci_bottom_up(n):
 
     for i in range(3, n + 1):
         dp[i] = dp[i - 3] + dp[i - 2] + dp[i - 1]
-        
+
     return dp[n]
 
 
 def find_tribonacci_constant(n):
     if n < 3:
         return 1 if n > 0 else 0
-    
+
     first, second, third = 0, 1, 1
     for _ in range(2, n - 2):
         first, second, third = second, third, first + second + third
@@ -722,7 +722,7 @@ def find_fibonacci_constant(n):
 def pascals_triangle(n):
     """
     Where n is the number of rows requested.
-    
+
     Output: List[List[int]]
     """
     triangle = []
@@ -744,6 +744,7 @@ def beautifulNumbers(l: int, r: int) -> int:
     """
     return count_beautiful(r) - count_beautiful(l - 1)
 
+
 def count_beautiful(n):
     digits = list(map(int, str(n)))
 
@@ -758,7 +759,9 @@ def count_beautiful(n):
             new_tight = tight and (d == limit)
             new_leading_zero = leading_zero and d == 0
             new_sum = sum_ + d
-            new_product = product if new_leading_zero else (product * d if d != 0 else 0)
+            new_product = (
+                product if new_leading_zero else (product * d if d != 0 else 0)
+            )
             count += dp(pos + 1, new_sum, new_product, new_tight, new_leading_zero)
 
         return count
@@ -770,7 +773,7 @@ def len_of_diagonal(grid: List[List[int]]) -> int:
     """
     leetcode (hard):
     https://leetcode.com/problems/length-of-longest-v-shaped-diagonal-segment/description/
-    
+
     Pretty straightforward DP problem. memoization occurs on the recursive function using @cache
     """
     m, n = len(grid), len(grid[0])
@@ -781,7 +784,7 @@ def len_of_diagonal(grid: List[List[int]]) -> int:
         # return 0 if not
         if row < 0 or row > m - 1 or col < 0 or col > n - 1:
             return 0
-        
+
         if grid[row][col] != target:
             return 0
 
@@ -834,15 +837,31 @@ def len_of_diagonal(grid: List[List[int]]) -> int:
     return longest
 
 
+def countSubarrays(nums: List[int], k: int) -> int:
+    """
+    leetcode:
+    https://leetcode.com/problems/count-subarrays-with-score-less-than-k/description/
+
+    We started with a DP approach, believing we could solve the problem
+    by looking at the recurring subproblem of is this, single-element
+    subarray, a valid subarray and building from there.
+
+    Hints tell us this is actually a prefix sum or two-pointer problem.
+
+    Hints:
+    - use sliding window with left and right pointers to represent current subarray
+    """
+    left, right = 0, 0
+    curr_sum = nums[0]
+    count = 0
+    while right < len(nums):
+        right += 1
+        curr_sum += nums[right]
+        while curr_sum * (right - left + 1) >= k:
+            curr_sum -= nums[left]
+            left += 1
+        count += (right - left + 1)
+    
+
 if __name__ == "__main__":
-    print(
-        len_of_diagonal(
-            [
-                [2, 2, 2, 2, 2],
-                [2, 0, 2, 2, 0],
-                [2, 0, 1, 1, 0],
-                [1, 0, 2, 2, 2],
-                [2, 0, 0, 2, 2],
-            ]
-        )
-    )
+    print(countSubarrays([2,1,4,3,5], 10))
