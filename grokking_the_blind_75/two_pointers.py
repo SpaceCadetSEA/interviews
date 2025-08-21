@@ -341,6 +341,34 @@ def pancake_sort(arr):
 
     return flips
 
+
+def countSubarrays(nums: List[int], k: int) -> int:
+    """
+    leetcode:
+    https://leetcode.com/problems/count-subarrays-with-score-less-than-k/description/
+
+    We started with a DP approach, believing we could solve the problem
+    by looking at the recurring subproblem of is this, single-element
+    subarray, a valid subarray and building from there.
+
+    Hints tell us this is actually a prefix sum or two-pointer problem.
+
+    Hints:
+    - use sliding window with left and right pointers to represent current subarray
+    """
+    left, right = 0, 0
+    curr_sum = nums[0]
+    count = 0
+    while right < len(nums):
+        right += 1
+        curr_sum += nums[right]
+        while curr_sum * (right - left + 1) >= k:
+            curr_sum -= nums[left]
+            left += 1
+        count += right - left + 1
+    return 0
+
+
 def sort_colors(colors):
     left, right = 0, len(colors) - 1
     i = 0
