@@ -1,5 +1,5 @@
 from math import inf
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 from data_structures.linked_list import LinkedList, display
 
@@ -29,7 +29,7 @@ def swap_string(word: list) -> list:
     return word
 
 
-def find_sorted_array_sum(array: List[int], sum: int) -> Tuple[int, int]:
+def find_sorted_array_sum(array: List[int], sum: int) -> Union[Tuple[int, int], str]:
     p1, p2 = 0, len(array) - 1
 
     while p1 < p2:
@@ -61,36 +61,47 @@ def move_zeroes(array: List[int]) -> List[int]:
     return array
 
 
-def three_sum(array: List[int]) -> List[List[int]]:
+def three_sum(array):
+    """
+    This is a much better 3-sum implementation since we break out increment/
+    decrement and duplication check into separate functions.
+    """
     array.sort()
-    result = []
-    for i, num in enumerate(array):
-        # If we have already seen this number in the proceeding loop, skip
-        if i > 0 and num == array[i - 1]:
+    result = set()
+    i = 0
+    while i < len(array) and array[i] <= 0:
+        if 0 < i and array[i] == array[i - 1]:
+            i += 1
             continue
-        # If our starting value is > 0, we cannot find a sum that equals 0, skip
-        if num > 0:
-            continue
-        p1, p2 = i + 1, len(array) - 1
-        while p1 < p2:
-            first, second = array[p1], array[p2]
-            current_sum = num + first + second
-            if current_sum == 0:
-                valid_tuple = [num, first, second]
-                # The following checks ensure we don't duplicate results
-                if len(result) > 0:
-                    if valid_tuple == result[-1]:
-                        p1 += 1
-                        p2 -= 1
-                        continue
-                result.append(valid_tuple)
-                p1 += 1
-                p2 -= 1
-            elif current_sum > 0:
-                p2 -= 1
+        left, right = i + 1, len(array) - 1
+        while left < right:
+            curr_sum = sum([array[i], array[left], array[right]])
+            if curr_sum == 0:
+                result.add((array[i], array[left], array[right]))
+                left = increment_left(array, left, right)
+                right = decrement_right(array, left, right)
+            elif curr_sum < 0:
+                left = increment_left(array, left, right)
             else:
-                p1 += 1
-    return result
+                right = decrement_right(array, left, right)
+        i += 1
+    return list(result)
+
+
+def increment_left(nums, left, right):
+    curr_left = left
+    left += 1
+    while left < right and nums[curr_left] == nums[left]:
+        left += 1
+    return left
+
+
+def decrement_right(nums, left, right):
+    curr_right = right
+    right -= 1
+    while left < right and nums[curr_right] == nums[right]:
+        right -= 1
+    return right
 
 
 def container_with_most_water(heights: List[int]) -> int:
@@ -136,7 +147,7 @@ class ListNode:
         self.next = next
 
 
-def remove_nth_last_node(head: List[int], n: int):
+def remove_nth_last_node(head: ListNode, n: int):
     """
     0-> 1-> 2-> 3-> null
 
@@ -144,13 +155,17 @@ def remove_nth_last_node(head: List[int], n: int):
     """
     left = head
     right = head
+    
     for _ in range(n):
         right = right.next
-        if right is None:
-            return head.next
-    while right.next is not None:
+    
+    if right is None:
+        return head.next
+    
+    while right.next:
         right = right.next
         left = left.next
+
     left.next = left.next.next
     return head
 
@@ -326,10 +341,25 @@ def pancake_sort(arr):
 
     return flips
 
+def sort_colors(colors):
+    left, right = 0, len(colors) - 1
+    i = 0
+    while i <= right:
+        if colors[i] == 0:
+            colors[i], colors[left] = colors[left], colors[i]
+            left += 1
+            i += 1
+        elif colors[i] == 2:
+            colors[i], colors[right] = colors[right], colors[i]
+            right -= 1
+        else:
+            i += 1
+    return colors
+
 
 if __name__ == "__main__":
     # linked_list = LinkedList([69,8,49, 105,106,116,112])
     # display(middle_of_linked_list(linked_list.head))
     # print(detect_cycle_in_array([2, 3, 1, 4, 5, 9, 7]))
     # print(is_happy_number(4))
-    print(pancake_sort([1, 2, 3]))
+    print(sort_colors([0, 1, 0]))
