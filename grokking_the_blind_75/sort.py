@@ -204,28 +204,43 @@ def find_missing_number(nums):
             nums[curr_val] = curr_val
     for i in range(len(nums)):
         if nums[i] != i:
-            return i     
+            return i
     return len(nums)
 
 
 def smallest_missing_positive_integer(nums):
+    """
+    Cyclic Sort -- O(N)
+    """
     i = 0
     while i < len(nums):
-        if nums[i] > len(nums) or nums[i] <= 0 or nums[i] == i + 1:
-            i += 1
+        correct_idx = nums[i] - 1
+        if 0 <= correct_idx < len(nums) and nums[i] != nums[correct_idx]:
+            nums[i], nums[correct_idx] = nums[correct_idx], nums[i]
         else:
-            curr_val = nums[i]
-            to_swap = nums[curr_val - 1]
-            nums[i] = to_swap
-            nums[curr_val - 1] = curr_val
-            if curr_val == to_swap:
-                i += 1
-            
+            i += 1
+
     for i in range(len(nums)):
         if nums[i] != i + 1:
             return i + 1
     return len(nums) + 1
 
 
-if __name__ == '__main__':
-    smallest_missing_positive_integer([55, 22, 52, 100, 1, 3, -5])
+def find_corrupt_pair(nums):
+    # perform cyclic sort -- [1, n]
+    i = 0
+    while i < len(nums):
+        correct_idx = nums[i] - 1
+        if 0 <= correct_idx < len(nums) and nums[i] != nums[correct_idx]:
+            nums[i], nums[correct_idx] = nums[correct_idx], nums[i]
+        else:
+            i += 1
+
+    # iterate over sorted list...
+    for i in range(len(nums)):
+        if nums[i] != i + 1:
+            return [i + 1, nums[i]]
+
+
+if __name__ == "__main__":
+    print(find_corrupt_pair([3, 1, 2, 5, 2]))
