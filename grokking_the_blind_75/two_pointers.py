@@ -345,7 +345,7 @@ def pancake_sort(arr):
 def countSubarrays(nums: List[int], k: int) -> int:
     """
     leetcode:
-    https://leetcode.com/problems/count-subarrays-with-score-less-than-k/description/
+    https://leetcode.om/problems/count-subarrays-with-score-less-than-k/description/
 
     We started with a DP approach, believing we could solve the problem
     by looking at the recurring subproblem of is this, single-element
