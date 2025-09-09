@@ -73,6 +73,24 @@ def reverse_bits(n):
     return res
 
 
+def integer_addition(a, b):
+    mask = 0xFFFFFFFF
+
+    while b != 0:
+        result = (a ^ b) & mask
+        carry = ((a & b) << 1) & mask
+
+        a = result
+        b = carry
+
+    max_int = 0x7FFFFFFF
+    if a < max_int:
+        return a
+
+    else:
+        return ~(a ^ mask)
+
+
 if __name__ == '__main__':
     encoded_string = encode(["I", "love", "educative"])
     print(encoded_string)

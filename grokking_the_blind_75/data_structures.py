@@ -404,8 +404,80 @@ def binary_search_matrix(nums, target):
     return False
 
 
+def shortest_bridge(grid: List[List[int]]) -> int:
+    """
+    Leetcode medium: https://leetcode.com/problems/shortest-bridge/
+    
+    Use a combination of depth first search to find the first island.
+    
+    Then we do breadth first search by enqueueing every node we've seen so far
+    and finding all of their neighbors. We also track the number of levels of
+    BFS as our answer. When we find another 1, we can exit the function and 
+    return the current level.
+    """
+    n = len(grid)
+    if n == 2:
+        return 1
+
+    # find the dimensions of the first island.
+    visited = set()
+    stack = []
+
+    # find the first 1 in the matrix for the first island.
+    row, col = 0, 0
+    while len(visited) == 0:
+        if grid[row][col] == 1:
+            stack.append((row, col))
+            visited.add((row, col))
+        elif col + 1 == n:
+            row += 1
+            col = 0
+        else:
+            col += 1
+
+    # perform breadth first search to identify the entire island
+    directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+    while stack:
+        node = stack.pop()
+        for dr, dc in directions:
+            new_row = node[0] + dr
+            new_col = node[1] + dc
+            if (
+                (new_row, new_col) not in visited
+                and 0 <= new_row < n
+                and 0 <= new_col < n
+                and grid[new_row][new_col] == 1
+            ):
+                visited.add((new_row, new_col))
+                stack.append((new_row, new_col))
+
+    queue = deque(list(visited))
+    
+    level = 0
+    while queue:
+        new_queue = deque()
+        for row, col in queue:
+            for dr, dc in directions:
+                new_row = row + dr
+                new_col = col + dc
+                if (
+                    (new_row, new_col) not in visited
+                    and 0 <= new_row < n 
+                    and 0 <= new_col < n
+                ):
+                    if grid[new_row][new_col] == 1:
+                        return level
+                    else:
+                        new_queue.append((new_row, new_col))
+                        visited.add((new_row, new_col))
+        queue = new_queue
+        level += 1
+
+    return level
+
+
 if __name__ == "__main__":
     linked_list = LinkedList([1, 2, 3, 4, 5])
     # display(reverse_k_groups(linked_list.head, 2))
     # print(calculator("12 - (6 + 2) + 5"))
-    print(binary_search_matrix([[1,2,3,4],[5,6,7,8],[10,11,12,13]], 10))
+    print(shortest_bridge([[0, 1, 0], [0, 0, 0], [0, 0, 1]]))
