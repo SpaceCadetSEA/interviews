@@ -452,7 +452,7 @@ def shortest_bridge(grid: List[List[int]]) -> int:
                 stack.append((new_row, new_col))
 
     queue = deque(list(visited))
-    
+
     level = 0
     while queue:
         new_queue = deque()
@@ -475,9 +475,26 @@ def shortest_bridge(grid: List[List[int]]) -> int:
 
     return level
 
+def taskSchedulerII(tasks: List[int], space: int) -> int:
+    """
+    Leetcode problem: https://leetcode.com/problems/task-scheduler-ii/description/
+    """
+    # maintain a dict that has the task id and the day we can next process
+    # this task
+    task_manager = {}
+    curr_day = 0
+    for task in tasks:
+        # If task was done before and cooldown hasn't passed, wait
+        if task in task_manager and curr_day <= task_manager[task] + space:
+            curr_day = task_manager[task] + space + 1
+        else:
+            curr_day += 1
+        task_manager[task] = curr_day  # Update last day we did this task
+    return curr_day
+
 
 if __name__ == "__main__":
     linked_list = LinkedList([1, 2, 3, 4, 5])
     # display(reverse_k_groups(linked_list.head, 2))
     # print(calculator("12 - (6 + 2) + 5"))
-    print(shortest_bridge([[0, 1, 0], [0, 0, 0], [0, 0, 1]]))
+    print(taskSchedulerII([5, 8, 8, 5], 2))
