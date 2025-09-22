@@ -318,10 +318,10 @@ def count_unguarded(
     https://leetcode.com/problems/count-unguarded-cells-in-the-grid/description/
 
     key insight is to minimize the iteration over the matrix when calculating
-    the safe spaces... my initial implementation which did a depth first 
+    the safe spaces... my initial implementation which did a depth first
     approach visiting all other rows and cols next to the guard cell.
 
-    changing the pattern to identify the directions you can travel and 
+    changing the pattern to identify the directions you can travel and
     iterating over them for each guard decreased the runtime from 3s to 400ms
     """
     matrix = [[0 for _ in range(n)] for _ in range(m)]
@@ -377,10 +377,11 @@ def totalStrength(strength: List[int]) -> int:
 
     return sum(wizards) % MOD
 
+
 def sub_lists(xs):
     n = len(xs)
-    indices = list(range(n+1))
-    for i,j in itertools.combinations(indices,2):
+    indices = list(range(n + 1))
+    for i, j in itertools.combinations(indices, 2):
         yield xs[i:j]
 
 
@@ -407,12 +408,12 @@ def binary_search_matrix(nums, target):
 def shortest_bridge(grid: List[List[int]]) -> int:
     """
     Leetcode medium: https://leetcode.com/problems/shortest-bridge/
-    
+
     Use a combination of depth first search to find the first island.
-    
+
     Then we do breadth first search by enqueueing every node we've seen so far
     and finding all of their neighbors. We also track the number of levels of
-    BFS as our answer. When we find another 1, we can exit the function and 
+    BFS as our answer. When we find another 1, we can exit the function and
     return the current level.
     """
     n = len(grid)
@@ -462,7 +463,7 @@ def shortest_bridge(grid: List[List[int]]) -> int:
                 new_col = col + dc
                 if (
                     (new_row, new_col) not in visited
-                    and 0 <= new_row < n 
+                    and 0 <= new_row < n
                     and 0 <= new_col < n
                 ):
                     if grid[new_row][new_col] == 1:
@@ -474,6 +475,7 @@ def shortest_bridge(grid: List[List[int]]) -> int:
         level += 1
 
     return level
+
 
 def taskSchedulerII(tasks: List[int], space: int) -> int:
     """
