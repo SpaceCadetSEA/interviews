@@ -205,11 +205,14 @@ def rotate_image(matrix: List[List[int]]) -> List[List[int]]:
         for col in range(row, n - 1 - row):
             top_left = (row, col)
             top_right = (col, n - 1 - row)
-            bottom_right = (n - 1 - row, n - 1 - col)
             bottom_left = (n - 1 - col, row)
+            bottom_right = (n - 1 - row, n - 1 - col)
 
             # swap top left and top right
-            (matrix[top_left[0]][top_left[1]], matrix[top_right[0]][top_right[1]]) = (
+            (
+                matrix[top_left[0]][top_left[1]], 
+                matrix[top_right[0]][top_right[1]]
+            ) = (
                 matrix[top_right[0]][top_right[1]],
                 matrix[top_left[0]][top_left[1]],
             )

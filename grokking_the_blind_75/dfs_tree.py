@@ -1,7 +1,7 @@
 from typing import List
 from collections import deque
 from math import inf
-from data_structures.trees import BinaryTree, TreeNode
+from ..data_structures.trees import BinaryTree, TreeNode
 
 
 def serialize(root: TreeNode) -> List[int]:

@@ -1,4 +1,5 @@
 from heapq import heappop, heappush
+import math
 
 
 def jump_game(nums):
@@ -12,8 +13,8 @@ def jump_game(nums):
 
 def gas_station_journey(gas, cost):
     """
-    Deceptively simple solution. 
-    
+    Deceptively simple solution.
+
     We iterate over the list a single time and just check the gas - cost at
     each index, incrementing starting index when the current is less than 0.
     """
@@ -60,13 +61,13 @@ def min_refuel_stops(target, start_fuel, stations):
 def rescue_boats(people, limit):
     people.sort()
     start, end = 0, len(people) - 1
-    
+
     boats = 0
-    
+
     while start <= end:
         first_passenger = people[start]
         last_passenger = people[end]
-        
+
         if first_passenger + last_passenger > limit:
             boats += 1
             last_passenger -= 1
@@ -74,7 +75,7 @@ def rescue_boats(people, limit):
             boats += 1
             first_passenger += 1
             last_passenger -= 1
-    
+
     return boats
 
 

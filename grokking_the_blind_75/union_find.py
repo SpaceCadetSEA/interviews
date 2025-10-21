@@ -6,6 +6,35 @@ of this widget. You can use this file to build your solution.
 from data_structures.union_find import UnionFind
 
 
+class DisjointSet:
+    def __init__(self, size):
+        self.size = [1] * size
+        self.parent = [i for i in range(size)]
+        self.count = size
+
+    def find(self, x):
+        if self.parent[x] == x:
+            return x
+        else:
+            # path compression optimization
+            self.parent[x] = self.find(self.parent[x])
+            return self.parent[x]
+
+    def add(self, x, y):
+        px = self.find(x)
+        py = self.find(y)
+        if px == py:
+            return
+        # union by size optimization
+        if self.size[px] < self.size[py]:
+            self.parent[px] = py
+            self.size[py] += self.size[px]
+        else:
+            self.parent[py] = px
+            self.size[px] += self.size[py]
+        self.count -= 1
+
+
 def num_islands(grid):
     rows = len(grid)
     cols = len(grid[0])
@@ -49,26 +78,6 @@ def find(num, parent):
     if num != parent[num]:
         parent[num] = find(parent[num], parent)
     return parent[num]
-
-
-class UnionFind:
-
-    # Constructor
-    def __init__(self, n):
-        self.parent = []
-        for i in range(n + 1):
-            self.parent.append(i)
-
-    # Function to find which subset a particular element belongs to
-    def find(self, v):
-        if self.parent[v] != v:
-            self.parent[v] = self.find(self.parent[v])
-        return self.parent[v]
-
-    # Function to join two subsets into a single subset
-    def union(self, x, y):
-        p1, p2 = self.find(x), self.find(y)
-        self.parent[p1] = p2
 
 
 def count_components(n, edges):

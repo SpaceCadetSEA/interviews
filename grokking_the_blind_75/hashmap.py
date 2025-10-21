@@ -46,7 +46,7 @@ def group_anagrams(strs: List[str]) -> List[List[str]]:
             anagram_dict[embedding].add(word)
         else:
             anagram_dict[embedding] = [word]
-    return list(anagram_dict.values()).sort(key=lambda x: len(x), reverse=True)
+    return sorted(list(anagram_dict.values()), key=lambda x: len(x), reverse=True)
 
 
 def _embed_string(word):
